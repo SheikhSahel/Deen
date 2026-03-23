@@ -1,0 +1,59 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "মূল কনটেন্টে যান" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - navigation "Main Navigation" [ref=e5]:
+        - link "نور নূর" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: نور
+          - generic [ref=e8]: নূর
+        - generic [ref=e9]:
+          - link "হোম" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "নামাজ" [ref=e11] [cursor=pointer]:
+            - /url: /namaz
+          - link "হজ্ব ও উমরা" [ref=e12] [cursor=pointer]:
+            - /url: /hajj-umrah
+          - link "কুরআন" [ref=e13] [cursor=pointer]:
+            - /url: /quran
+          - link "কিতাব" [ref=e14] [cursor=pointer]:
+            - /url: /kitab
+          - link "হাদিস" [ref=e15] [cursor=pointer]:
+            - /url: /hadith
+          - link "তাসবিহ" [ref=e16] [cursor=pointer]:
+            - /url: /tasbih
+          - link "কিবলা" [ref=e17] [cursor=pointer]:
+            - /url: /qibla
+          - link "দু'আ" [ref=e18] [cursor=pointer]:
+            - /url: /duas
+        - button "থিম পরিবর্তন করুন" [ref=e21] [cursor=pointer]:
+          - img
+    - main [ref=e22]:
+      - region "কুরআন" [ref=e24]:
+        - generic [ref=e26]:
+          - heading "কুরআন" [level=1] [ref=e27]
+          - paragraph [ref=e28]: আপনি কি কুরআন পড়তে চান, নাকি কুরআন শিখতে চান—একটি অপশন বেছে নিন।
+        - generic [ref=e29]:
+          - generic [ref=e31]:
+            - heading "কুরআন পড়ুন" [level=3] [ref=e32]
+            - paragraph [ref=e33]: সূরা অনুসন্ধান, অনুবাদসহ পাঠ এবং এক ক্লিকে পুরো কুরআন শোনার সুবিধা।
+            - link "কুরআন পড়তে যান" [ref=e34] [cursor=pointer]:
+              - /url: /quran/read
+          - generic [ref=e36]:
+            - heading "কুরআন শিক্ষা" [level=3] [ref=e37]
+            - paragraph [ref=e38]: বেসিক থেকে অ্যাডভান্সড—ধাপে ধাপে তাজবিদ ও শুদ্ধ তিলাওয়াত শেখার গাইডলাইন।
+            - link "কুরআন শিক্ষা অংশে যান" [ref=e39] [cursor=pointer]:
+              - /url: /quran/learn
+    - contentinfo [ref=e40]:
+      - generic [ref=e42]:
+        - heading "নূর" [level=3] [ref=e43]
+        - paragraph [ref=e44]: নামাজ, কুরআন, হাদিস, দু‘আ এবং দৈনন্দিন আধ্যাত্মিক উন্নতির জন্য পূর্ণাঙ্গ ইসলামিক প্ল্যাটফর্ম।
+  - button "AI সাহায্য" [ref=e45] [cursor=pointer]:
+    - img
+  - region "Notifications alt+T"
+  - alert [ref=e46]
+```

@@ -1,0 +1,9 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#062f2a"/>
+  <circle cx="150" cy="40" r="260" fill="#10B981" fill-opacity="0.25"/>
+  <circle cx="1040" cy="90" r="220" fill="#D4A017" fill-opacity="0.35"/>
+  <text x="72" y="122" fill="#D4A017" font-family="Inter, Arial, sans-serif" font-size="32" letter-spacing="2">NOOR PLATFORM</text>
+  <text x="72" y="290" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="76" font-weight="700">Noor – The Complete</text>
+  <text x="72" y="374" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="76" font-weight="700">Islamic Platform</text>
+  <text x="72" y="502" fill="#CBD5E1" font-family="Inter, Arial, sans-serif" font-size="34">Prayer Times • Quran • Hadith • Qibla • Duas</text>
+</svg>

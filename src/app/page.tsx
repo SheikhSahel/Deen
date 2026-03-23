@@ -1,101 +1,60 @@
-import Image from "next/image";
+import { HeroSection } from "@/components/home/hero-section";
+import { SectionHeader } from "@/components/shared/section-header";
+import { MotionReveal, MotionStagger } from "@/components/motion/motion-section";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChecklistPlanner } from "@/components/shared/checklist-planner";
+import { RamadanCountdown } from "@/components/home/ramadan-countdown";
+import dynamic from "next/dynamic";
+
+const CountdownSkeleton = () => <Skeleton className="h-40 rounded-2xl" />;
+const DuaSkeleton = () => <Skeleton className="h-44 rounded-2xl" />;
+
+const DailyQuote = dynamic(() => import("@/components/home/daily-quote").then((mod) => mod.DailyQuote), {
+  loading: CountdownSkeleton,
+});
+const DailyDua = dynamic(() => import("@/components/home/daily-dua").then((mod) => mod.DailyDua), {
+  loading: DuaSkeleton,
+});
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <MotionStagger className="space-y-8 sm:space-y-10 md:space-y-12">
+      <MotionReveal>
+        <HeroSection />
+      </MotionReveal>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      <MotionReveal>
+        <section className="section-shell">
+          <SectionHeader
+            title="দৈনিক ইবাদতের প্রয়োজনীয় অংশ"
+            subtitle="রিয়েল-টাইম টুল ও দৈনিক স্মরণিকার মাধ্যমে দ্বীনের সাথে সংযুক্ত থাকুন।"
+          />
+          <div className="grid gap-3 sm:gap-4 lg:grid-cols-2">
+            <RamadanCountdown />
+            <DailyQuote />
+          </div>
+          <div className="mt-4">
+            <ChecklistPlanner
+              title="রমজান প্ল্যানার"
+              storageKey="noor-ramadan-planner"
+              items={[
+                { id: "fajr-jamaat", label: "ফজর জামাতে আদায়" },
+                { id: "quran-tilawah", label: "কমপক্ষে ১ রুকু তিলাওয়াত" },
+                { id: "charity", label: "সাদাকাহ / সহায়তা" },
+                { id: "iftar-dua", label: "ইফতারের পূর্বে দু‘আ" },
+                { id: "taraweeh", label: "তারাবিহ আদায়" },
+              ]}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          </div>
+        </section>
+      </MotionReveal>
+
+      <MotionReveal>
+        <section className="section-shell">
+          <SectionHeader title="আজকের দু‘আ" subtitle="লোকেশন বা অতিরিক্ত API ছাড়াই তাৎক্ষণিকভাবে আপডেট হওয়া নির্বাচিত দু‘আ।" />
+          <DailyDua />
+        </section>
+      </MotionReveal>
+    </MotionStagger>
   );
 }

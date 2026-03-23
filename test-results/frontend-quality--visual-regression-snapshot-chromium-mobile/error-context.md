@@ -1,0 +1,104 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "মূল কনটেন্টে যান" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - navigation "Main Navigation" [ref=e5]:
+        - link "نور নূর" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: نور
+          - generic [ref=e8]: নূর
+        - generic [ref=e9]:
+          - button "থিম পরিবর্তন করুন" [ref=e11] [cursor=pointer]:
+            - img
+          - button "মেনু খুলুন" [ref=e12] [cursor=pointer]:
+            - img
+    - main [ref=e13]:
+      - generic [ref=e15]:
+        - generic [ref=e17]:
+          - generic:
+            - generic: نور
+            - generic: رحمة
+            - generic: سلام
+            - generic: إيمان
+            - generic: بركة
+            - generic: صلاة
+          - generic [ref=e18]:
+            - paragraph [ref=e19]: নূর প্ল্যাটফর্ম
+            - heading "নূর – পূর্ণাঙ্গ ইসলামিক প্ল্যাটফর্ম" [level=1] [ref=e20]
+            - paragraph [ref=e21]: নামাজের সময়সূচি, কুরআন, হাদিস, দু‘আ এবং দৈনন্দিন আধ্যাত্মিকতার জন্য আধুনিক ইসলামিক অভিজ্ঞতা।
+            - generic [ref=e22]:
+              - generic [ref=e23]:
+                - paragraph [ref=e24]: English
+                - paragraph [ref=e25]: Sunday, 22 March 2026
+              - generic [ref=e26]:
+                - paragraph [ref=e27]: বাংলা
+                - paragraph [ref=e28]: রবিবার, ৭শে চৈত্র ১৪৩২ বঙ্গাব্দ
+              - generic [ref=e29]:
+                - paragraph [ref=e30]: Arabic (Hijri)
+                - paragraph [ref=e31]: ২ শাওয়াল ১৪৪৭ হিজরি
+            - generic [ref=e32]:
+              - link "নামাজের সময় দেখুন" [ref=e33] [cursor=pointer]:
+                - /url: /prayer-times
+              - link "কুরআন পড়ুন" [ref=e34] [cursor=pointer]:
+                - /url: /quran
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - heading "দৈনিক ইবাদতের প্রয়োজনীয় অংশ" [level=2] [ref=e38]
+            - paragraph [ref=e39]: রিয়েল-টাইম টুল ও দৈনিক স্মরণিকার মাধ্যমে দ্বীনের সাথে সংযুক্ত থাকুন।
+          - generic [ref=e40]:
+            - generic [ref=e41]:
+              - heading "রমজান প্রস্তুতি" [level=3] [ref=e42]
+              - paragraph [ref=e43]: এই বছরের রমজান শেষ হয়েছে।
+              - generic [ref=e44]:
+                - generic [ref=e45]:
+                  - paragraph [ref=e46]: "321"
+                  - paragraph [ref=e47]: দিন বাকি
+                - generic [ref=e48]:
+                  - paragraph [ref=e49]: ০৭ ফেব্রুয়ারী, ২০২৭
+                  - paragraph [ref=e50]: সম্ভাব্য শুরু
+            - generic [ref=e51]:
+              - heading "দৈনিক ইসলামিক বাণী" [level=3] [ref=e52]
+              - paragraph [ref=e53]: وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا
+              - paragraph [ref=e54]: যে আল্লাহকে ভয় করে, তিনি তার জন্য উত্তরণের পথ করে দেন।
+              - paragraph [ref=e55]: কুরআন ৬৫:২
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - heading "রমজান প্ল্যানার" [level=3] [ref=e59]
+              - paragraph [ref=e60]: "অগ্রগতি: 0%"
+            - generic [ref=e62]:
+              - button "○ ফজর জামাতে আদায়" [ref=e63] [cursor=pointer]
+              - button "○ কমপক্ষে ১ রুকু তিলাওয়াত" [ref=e64] [cursor=pointer]
+              - button "○ সাদাকাহ / সহায়তা" [ref=e65] [cursor=pointer]
+              - button "○ ইফতারের পূর্বে দু‘আ" [ref=e66] [cursor=pointer]
+              - button "○ তারাবিহ আদায়" [ref=e67] [cursor=pointer]
+            - generic [ref=e68]:
+              - button "এক্সপোর্ট" [ref=e69] [cursor=pointer]:
+                - img
+                - text: এক্সপোর্ট
+              - button "ইমপোর্ট" [ref=e70] [cursor=pointer]:
+                - img
+                - text: ইমপোর্ট
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - heading "আজকের দু‘আ" [level=2] [ref=e74]
+            - paragraph [ref=e75]: লোকেশন বা অতিরিক্ত API ছাড়াই তাৎক্ষণিকভাবে আপডেট হওয়া নির্বাচিত দু‘আ।
+          - generic [ref=e76]:
+            - paragraph [ref=e77]: আজকের নির্বাচিত দু‘আ
+            - heading "বাজারে প্রবেশের দু'আ" [level=3] [ref=e78]
+            - paragraph [ref=e79]: لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ
+            - paragraph [ref=e80]: আল্লাহ ছাড়া কোনো উপাস্য নেই, তিনি একক, তাঁর কোনো শরিক নেই; রাজত্ব তাঁর এবং প্রশংসা তাঁরই।
+            - link "আরও দু‘আ দেখুন" [ref=e81] [cursor=pointer]:
+              - /url: /duas
+    - contentinfo [ref=e82]:
+      - generic [ref=e84]:
+        - heading "নূর" [level=3] [ref=e85]
+        - paragraph [ref=e86]: নামাজ, কুরআন, হাদিস, দু‘আ এবং দৈনন্দিন আধ্যাত্মিক উন্নতির জন্য পূর্ণাঙ্গ ইসলামিক প্ল্যাটফর্ম।
+  - button "AI সাহায্য" [ref=e87] [cursor=pointer]:
+    - img
+  - region "Notifications alt+T"
+  - alert [ref=e88]
+```

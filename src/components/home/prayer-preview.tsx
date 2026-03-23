@@ -1,0 +1,71 @@
+"use client";
+
+import { useGeolocation } from "@/hooks/use-geolocation";
+import { usePrayerTimes } from "@/hooks/use-prayer-times";
+import { GlassCard } from "@/components/shared/glass-card";
+import { PRAYER_ORDER, getNextPrayer, sanitizePrayerTime } from "@/utils/prayer";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const PRAYER_LABELS: Record<string, string> = {
+  Fajr: "ফজর",
+  Dhuhr: "যোহর",
+  Asr: "আসর",
+  Maghrib: "মাগরিব",
+  Isha: "এশা",
+};
+
+export function PrayerPreview() {
+  const { coordinates, loading: locationLoading, error } = useGeolocation();
+  const { data, loading } = usePrayerTimes(coordinates?.latitude, coordinates?.longitude);
+
+  if (locationLoading || loading) {
+    return (
+      <GlassCard>
+        <h3 className="text-lg font-semibold sm:text-xl">নামাজের সময়ের প্রিভিউ</h3>
+        <p className="mt-2 text-sm text-muted-foreground">লোকেশন থেকে সময়সূচি আনা হচ্ছে...</p>
+        <div className="mt-4 space-y-2">
+          <Skeleton className="h-5 w-full rounded-lg" />
+          <Skeleton className="h-5 w-full rounded-lg" />
+          <Skeleton className="h-5 w-2/3 rounded-lg" />
+        </div>
+      </GlassCard>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <GlassCard>
+        <h3 className="text-lg font-semibold sm:text-xl">নামাজের সময়ের প্রিভিউ</h3>
+        <p className="mt-2 text-sm text-muted-foreground">আজকের সময়সূচি দেখতে লোকেশন চালু করুন।</p>
+      </GlassCard>
+    );
+  }
+
+  const nextPrayer = getNextPrayer(data.data.timings);
+
+  return (
+    <GlassCard>
+      <h3 className="text-lg font-semibold sm:text-xl">নামাজের সময়ের প্রিভিউ</h3>
+      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-5 sm:gap-3">
+        {PRAYER_ORDER.map((prayer) => {
+          const isNext = prayer === nextPrayer;
+          return (
+            <div
+              key={prayer}
+              className={`rounded-xl border p-2.5 text-center sm:p-3 ${
+                isNext
+                  ? "border-emerald-500 bg-emerald-500/10"
+                  : "border-emerald-300/20 bg-black/10"
+              }`}
+            >
+              <p className="text-xs font-medium sm:text-sm">{PRAYER_LABELS[prayer] ?? prayer}</p>
+              <p className="mt-1 text-base font-semibold text-amber-500 sm:text-lg">
+                {sanitizePrayerTime(data.data.timings[prayer])}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </GlassCard>
+  );
+}
