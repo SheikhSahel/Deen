@@ -309,6 +309,7 @@ export function HeroSection() {
         {calligraphy.map((word, index) => (
           <motion.span
             key={word}
+            aria-hidden="true"
             className="arabic-text absolute text-3xl text-emerald-300/20 sm:text-4xl md:text-6xl"
             style={{ top: `${8 + index * 13}%`, left: `${3 + (index % 3) * 31}%` }}
             animate={{ y: [0, -8, 0], opacity: [0.15, 0.32, 0.15] }}

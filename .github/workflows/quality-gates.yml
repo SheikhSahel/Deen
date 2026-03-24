@@ -100,8 +100,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Set Chrome path from Playwright
-        shell: bash
-        run: echo "CHROME_PATH=$(node -e \"console.log(require('playwright').chromium.executablePath())\")" >> $GITHUB_ENV
+        run: node -e "console.log('CHROME_PATH=' + require('playwright').chromium.executablePath())" >> $GITHUB_ENV
 
       - name: Run Lighthouse audit
         run: npm run audit:lighthouse

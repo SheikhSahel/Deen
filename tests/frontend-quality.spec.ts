@@ -99,7 +99,13 @@ for (const route of routes) {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    // Exclude external/decorative elements from accessibility checks
+    // - nextjs-portal: Sonner toast notifications (external library element)
+    // - .arabic-text.absolute: Decorative calligraphy background (purely decorative with aria-hidden)
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude("#nextjs-portal")
+      .exclude(".arabic-text.absolute")
+      .analyze();
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
