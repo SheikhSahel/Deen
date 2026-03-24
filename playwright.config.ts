@@ -10,8 +10,6 @@ export default defineConfig({
     permissions: ["geolocation"],
     geolocation: { latitude: 24.7136, longitude: 46.6753 },
   },
-  // Normalize snapshot names across platforms (Windows/Linux)
-  snapshotPathTemplate: "{snapshotDir}/{testFileDir}/{testFileName}-{platform}{ext}",
   projects: [
     {
       name: "chromium-desktop",

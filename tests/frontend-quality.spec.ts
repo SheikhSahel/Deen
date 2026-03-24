@@ -104,6 +104,7 @@ for (const route of routes) {
     // - .arabic-text.absolute: Decorative calligraphy background (purely decorative with aria-hidden)
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude("#nextjs-portal")
+      .exclude("#nextjs-portal *")
       .exclude(".arabic-text.absolute")
       .analyze();
     expect(accessibilityScanResults.violations).toEqual([]);
