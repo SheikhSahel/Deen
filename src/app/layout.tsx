@@ -11,8 +11,10 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-amiri" });
 const notoSansBengali = Noto_Sans_Bengali({ subsets: ["bengali"], weight: ["400", "500", "600", "700"], variable: "--font-bn" });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://noor-platform.vercel.app";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://noor-platform.vercel.app"),
+  metadataBase: new URL(siteUrl),
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",
@@ -66,7 +68,7 @@ export default function RootLayout({
           </a>
           <div className="min-h-screen bg-background text-foreground">
             <Navbar />
-            <main id="main-content" className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-5 sm:py-8 md:px-6 md:py-10 lg:py-12">
+            <main id="main-content" className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 md:px-8 md:py-8 lg:py-12">
               <PageTransition>{children}</PageTransition>
             </main>
             <Footer />

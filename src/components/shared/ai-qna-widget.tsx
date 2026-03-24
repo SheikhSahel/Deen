@@ -207,7 +207,10 @@ export function AiQnaWidget() {
       <Button
         size="icon"
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-[70] h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-md hover:bg-primary/90"
+        className={cn(
+          "fixed bottom-5 right-5 z-[70] h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-md hover:bg-primary/90",
+          open ? "hidden" : "inline-flex",
+        )}
         aria-label="AI সাহায্য"
       >
         <MessageCircleQuestion className="h-6 w-6" />
@@ -263,8 +266,8 @@ export function AiQnaWidget() {
         </div>
 
         <div className="border-t border-emerald-400/20 px-4 py-3">
-          <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">ওয়েবসাইট সম্পূর্ণ বন্ধ করলে এই সেশনের ইতিহাস মুছে যাবে।</p>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <p className="w-full text-xs text-muted-foreground">ওয়েবসাইট সম্পূর্ণ বন্ধ করলে এই সেশনের ইতিহাস মুছে যাবে।</p>
             <Button
               variant={citationsMode ? "default" : "outline"}
               size="sm"
@@ -280,7 +283,7 @@ export function AiQnaWidget() {
             ) : null}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <textarea
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
@@ -296,7 +299,7 @@ export function AiQnaWidget() {
             <Button
               onClick={() => void askQuestion()}
               disabled={!canSend}
-              className="h-[46px] rounded-md bg-emerald-700 px-3 hover:bg-emerald-800"
+              className="h-[46px] w-full rounded-md bg-emerald-700 px-3 hover:bg-emerald-800 sm:w-auto"
               aria-label="প্রশ্ন পাঠান"
             >
               <Send className="h-4 w-4" />

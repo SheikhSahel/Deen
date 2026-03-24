@@ -49,7 +49,10 @@ function buildRamadanSnapshot(settings: { country: "BD" | "SA"; moonSightingOffs
 
 export function RamadanCountdown() {
   const { settings } = useIslamicSettings();
-  const [snapshot, setSnapshot] = useState<RamadanSnapshot | null>(null);
+  const [snapshot, setSnapshot] = useState<RamadanSnapshot>(() => buildRamadanSnapshot({
+    country: "BD",
+    moonSightingOffset: 0,
+  }));
 
   useLayoutEffect(() => {
     setSnapshot(buildRamadanSnapshot(settings));
@@ -66,15 +69,15 @@ export function RamadanCountdown() {
   return (
     <GlassCard>
       <h3 className="text-lg font-semibold sm:text-xl">রমজান প্রস্তুতি</h3>
-      <p className="mt-3 text-sm text-emerald-500 sm:text-base">{snapshot?.statusText ?? "তথ্য লোড হচ্ছে..."}</p>
+      <p className="mt-3 text-sm text-emerald-500 sm:text-base">{snapshot.statusText}</p>
 
       <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:gap-3">
         <div className="rounded-xl border border-emerald-300/20 bg-black/10 p-2.5 text-center sm:p-3">
-          <p className="text-xl font-semibold text-emerald-500 sm:text-2xl">{snapshot ? snapshot.daysLeft : "--"}</p>
+          <p className="text-xl font-semibold text-emerald-500 sm:text-2xl">{snapshot.daysLeft}</p>
           <p className="text-xs uppercase text-muted-foreground">দিন বাকি</p>
         </div>
         <div className="rounded-xl border border-emerald-300/20 bg-black/10 p-2.5 text-center sm:p-3">
-          <p className="text-sm font-semibold text-emerald-500 sm:text-base">{snapshot?.nextStartDate ?? "--"}</p>
+          <p className="text-sm font-semibold text-emerald-500 sm:text-base">{snapshot.nextStartDate}</p>
           <p className="text-xs uppercase text-muted-foreground">সম্ভাব্য শুরু</p>
         </div>
       </div>

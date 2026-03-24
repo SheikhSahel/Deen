@@ -8,11 +8,11 @@
   }
 
   .section-shell {
-    @apply rounded-3xl border border-emerald-400/20 bg-white/5 p-4 shadow-xl backdrop-blur-xl sm:p-6 md:p-8;
+    @apply rounded-3xl border border-emerald-400/20 bg-white/5 p-4 shadow-xl backdrop-blur-xl sm:p-6 md:p-6 lg:p-8;
   }
 
   .page-shell {
-    @apply rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-4 shadow-xl backdrop-blur-md sm:p-6 md:p-8;
+    @apply rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-4 shadow-xl backdrop-blur-md sm:p-6 md:p-6 lg:p-8;
   }
 
   .interactive-lift {
@@ -84,6 +84,8 @@
 
   html {
     @apply scroll-smooth;
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
   }
 
   @media (prefers-reduced-motion: reduce) {

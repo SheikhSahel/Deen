@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const routes = ["/", "/quran", "/hadith", "/qibla"];
+const routes = ["/", "/quran", "/hadith"];
 
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/prayer-times**", async (route) => {

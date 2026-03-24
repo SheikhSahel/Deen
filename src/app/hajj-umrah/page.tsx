@@ -1,8 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
-import Hls from "hls.js";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Book, BookOpen, Building2, CircleHelp, GraduationCap, Hand, Map } from "lucide-react";
 import { GlassCard } from "@/components/shared/glass-card";
 import { ChecklistPlanner } from "@/components/shared/checklist-planner";
@@ -10,16 +9,18 @@ import { PageShell } from "@/components/shared/page-shell";
 import { MotionReveal, MotionStagger } from "@/components/motion/motion-section";
 
 const MAKKAH_TIMEZONE = "Asia/Riyadh";
-const LIVE_STREAMS = [
+const LIVE_BROADCAST_SOURCES = [
   {
-    id: "quran-tv",
-    label: "কুরআন টিভি লাইভ",
-    hlsUrl: "https://win.holol.com/live/quran/playlist.m3u8",
+    id: "makkah-haram",
+    label: "মক্কা লাইভ - আল-হারাম আল-মক্কি",
+    description: "মক্কার পবিত্র মসজিদের সরাসরি লাইভ সম্প্রচার",
+    embedUrl: "https://www.youtube.com/embed/H5D7gPbnLrY",
   },
   {
-    id: "sunnah-tv",
-    label: "সুন্নাহ টিভি লাইভ",
-    hlsUrl: "https://win.holol.com/live/sunnah/playlist.m3u8",
+    id: "madinah-haram",
+    label: "মদিনা লাইভ",
+    description: "মদিনার মসজিদে নববীর সরাসরি লাইভ সম্প্রচার",
+    embedUrl: "https://www.youtube.com/embed/NOmU_zOKZpE",
   },
 ] as const;
 
@@ -77,13 +78,10 @@ const SECTION_CARDS = [
 export default function HajjUmrahPage() {
   const [dhakaTime, setDhakaTime] = useState<string>("--:--");
   const [makkaTime, setMakkaTime] = useState<string>("--:--");
-  const [selectedStreamId, setSelectedStreamId] = useState<(typeof LIVE_STREAMS)[number]["id"]>("quran-tv");
-  const [streamError, setStreamError] = useState<string>("");
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const selectedStream = useMemo(
-    () => LIVE_STREAMS.find((stream) => stream.id === selectedStreamId) ?? LIVE_STREAMS[0],
-    [selectedStreamId],
+  const [selectedBroadcastId, setSelectedBroadcastId] = useState<(typeof LIVE_BROADCAST_SOURCES)[number]["id"]>(
+    "makkah-haram"
   );
+  const selectedBroadcast = LIVE_BROADCAST_SOURCES.find((source) => source.id === selectedBroadcastId) ?? LIVE_BROADCAST_SOURCES[0];
 
   useEffect(() => {
     const updateTime = () => {
@@ -110,53 +108,6 @@ export default function HajjUmrahPage() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    setStreamError("");
-
-    let hls: Hls | null = null;
-    const handleVideoError = () => {
-      setStreamError("লাইভ ভিডিও এই মুহূর্তে চালু করা যাচ্ছে না। কুরআন/সুন্নাহ সোর্স পরিবর্তন করে আবার চেষ্টা করুন।");
-    };
-
-    video.addEventListener("error", handleVideoError);
-
-    if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = selectedStream.hlsUrl;
-      void video.play().catch(() => {
-        // Ignore autoplay restrictions; user can press play manually.
-      });
-    } else if (Hls.isSupported()) {
-      hls = new Hls({ lowLatencyMode: true });
-      hls.loadSource(selectedStream.hlsUrl);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.ERROR, (_event, data) => {
-        if (data.fatal) {
-          handleVideoError();
-        }
-      });
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        void video.play().catch(() => {
-          // Ignore autoplay restrictions; user can press play manually.
-        });
-      });
-    } else {
-      setStreamError("আপনার ব্রাউজারে লাইভ HLS স্ট্রিম সমর্থিত নয়।");
-    }
-
-    return () => {
-      video.removeEventListener("error", handleVideoError);
-      if (hls) {
-        hls.destroy();
-      }
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
-    };
-  }, [selectedStream]);
-
   return (
     <PageShell
       id="hajj-title"
@@ -172,40 +123,45 @@ export default function HajjUmrahPage() {
         </p>
       </div>
 
-      <div className="mb-8 overflow-hidden rounded-2xl border border-emerald-400/20 bg-black/30 shadow-lg">
-        <div className="border-b border-emerald-400/20 px-4 py-3 sm:px-6">
-          <h3 className="text-base font-semibold text-emerald-500 sm:text-lg">মক্কার লাইভ সম্প্রচার</h3>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {LIVE_STREAMS.map((stream) => (
-              <button
-                key={stream.id}
-                type="button"
-                onClick={() => setSelectedStreamId(stream.id)}
-                className={
-                  selectedStream.id === stream.id
-                    ? "rounded-md border border-emerald-500 bg-emerald-500/15 px-3 py-1 text-xs text-emerald-400"
-                    : "rounded-md border border-emerald-400/30 px-3 py-1 text-xs text-muted-foreground hover:bg-emerald-500/10"
-                }
-              >
-                {stream.label}
-              </button>
-            ))}
+      <div className="mb-8 space-y-4">
+        <div className="rounded-2xl border border-emerald-400/20 bg-black/30 shadow-lg">
+          <div className="px-4 py-3 sm:px-6">
+            <h3 className="text-base font-semibold text-emerald-500 sm:text-lg">পবিত্র মসজিদের লাইভ সম্প্রচার</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              মক্কা এবং মদিনার পবিত্র মসজিদগুলির সরাসরি লাইভ সম্প্রচার দেখুন
+            </p>
+          </div>
+          <div className="border-t border-emerald-400/20 px-4 py-4 sm:px-6">
+            <div className="mb-4 flex flex-wrap gap-2">
+              {LIVE_BROADCAST_SOURCES.map((source) => (
+                <button
+                  key={source.id}
+                  onClick={() => setSelectedBroadcastId(source.id)}
+                  className={
+                    selectedBroadcast.id === source.id
+                      ? "rounded-md border border-emerald-500 bg-emerald-500/20 px-3 py-2 text-sm font-medium text-emerald-200 transition-colors"
+                      : "rounded-md border border-emerald-400/30 bg-emerald-400/5 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-emerald-400/50 hover:text-emerald-300"
+                  }
+                >
+                  {source.label}
+                </button>
+              ))}
+            </div>
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
+              <iframe
+                key={selectedBroadcast.id}
+                className="h-full w-full"
+                src={selectedBroadcast.embedUrl}
+                title={selectedBroadcast.label}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              <strong>{selectedBroadcast.label}:</strong> {selectedBroadcast.description}
+            </p>
           </div>
         </div>
-        <div className="relative aspect-video w-full overflow-hidden">
-          <video
-            ref={videoRef}
-            className="h-full w-full bg-black"
-            controls
-            autoPlay
-            muted
-            playsInline
-            aria-label="মক্কার লাইভ সম্প্রচার"
-          />
-        </div>
-        {streamError ? (
-          <div className="border-t border-emerald-400/20 px-4 py-3 text-sm text-amber-400 sm:px-6">{streamError}</div>
-        ) : null}
       </div>
 
       <GlassCard className="mb-8">

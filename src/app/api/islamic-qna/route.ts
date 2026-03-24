@@ -66,6 +66,28 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function buildFallbackAnswer(question: string, citationsMode: boolean) {
+  const q = question.toLowerCase();
+
+  let core = "এই প্রশ্নে সংক্ষিপ্তভাবে বললে: নিয়ত ঠিক রেখে কুরআন-সুন্নাহ অনুযায়ী সহজ আমল করুন এবং জটিল বিষয়ে বিশ্বস্ত আলেমের পরামর্শ নিন।";
+
+  if (q.includes("রোজা") || q.includes("সিয়াম") || q.includes("সাওম")) {
+    core = "রোজার বিষয়ে মূলনীতি হলো: নিয়ত, সাহরি, সুবহে সাদিকের পর পানাহার থেকে বিরত থাকা এবং মাগরিবে ইফতার করা। বিশেষ পরিস্থিতিতে কাযা/ফিদইয়া বিষয়ে আলেমের থেকে নির্দিষ্ট ফতোয়া নিন।";
+  } else if (q.includes("নামাজ") || q.includes("সালাত") || q.includes("সালাহ")) {
+    core = "নামাজে সময়, পবিত্রতা, কিবলামুখী হওয়া ও খুশু খুব গুরুত্বপূর্ণ। ফরজ/ওয়াজিব বিষয়ে সন্দেহ হলে নিকটস্থ মসজিদের ইমাম বা নির্ভরযোগ্য আলেমের কাছে যাচাই করুন।";
+  } else if (q.includes("যাকাত") || q.includes("zakat")) {
+    core = "যাকাতের ক্ষেত্রে নিসাব, বছর পূর্ণ হওয়া এবং সম্পদের ধরন ঠিকভাবে হিসাব করা জরুরি। ব্যক্তিগত সম্পদের বিস্তারিত ভিন্ন হলে আলেমের সহায়তায় হিসাব নিশ্চিত করুন।";
+  } else if (q.includes("হজ") || q.includes("উমরা")) {
+    core = "হজ/উমরায় ইহরাম, তাওয়াফ, সাঈ ও নির্দিষ্ট বিধানগুলো ধাপে ধাপে শিখে পালন করুন। সফরের আগে প্রশিক্ষণভিত্তিক গাইড অনুসরণ করলে ভুল কম হয়।";
+  }
+
+  const sourceLine = citationsMode
+    ? "সূত্র: কুরআন-সুন্নাহর সাধারণ নীতির ভিত্তিতে সংক্ষিপ্ত দিকনির্দেশনা। নির্দিষ্ট মাসআলার জন্য নির্ভরযোগ্য ফিকহি গ্রন্থ/আলেম থেকে যাচাই করুন।\n"
+    : "";
+
+  return `${core}\n\n${sourceLine}মাযহাবি নোট: এ বিষয়ে মাযহাবভেদে বিস্তারিত বিধানে পার্থক্য থাকতে পারে।\nঅনিশ্চয়তা নোট: এটি সংক্ষিপ্ত সহায়ক উত্তর; চূড়ান্ত আমলের আগে যোগ্য আলেমের সাথে যাচাই করুন।`;
+}
+
 async function callProvider(
   messages: Array<{ role: "system" | "user" | "assistant"; content: string }>,
   siteUrl: string,
@@ -138,11 +160,10 @@ export async function POST(request: NextRequest) {
     if (!AI_API_KEY) {
       return NextResponse.json(
         {
-          message: "AI service is not configured.",
-          answer:
-            "এই মুহূর্তে AI সহায়তা সক্রিয় নয়। অ্যাডমিনকে AI_API_KEY সেটআপ করতে বলুন, তাহলে আমি প্রশ্নের উত্তর দিতে পারব।",
+          message: "Fallback answer",
+          answer: buildFallbackAnswer(question, citationsMode),
         },
-        { status: 503 },
+        { status: 200 },
       );
     }
 

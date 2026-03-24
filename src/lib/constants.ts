@@ -10,7 +10,6 @@ export const NAV_LINKS = [
   { label: "কিতাব", href: "/kitab" },
   { label: "হাদিস", href: "/hadith" },
   { label: "তাসবিহ", href: "/tasbih" },
-  { label: "কিবলা", href: "/qibla" },
   { label: "দু'আ", href: "/duas" },
 ] as const;
 

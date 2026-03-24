@@ -81,6 +81,12 @@ export function usePrayerTimes(latitude?: number, longitude?: number) {
     };
 
     void load();
+    // Refresh prayer times every 15 minutes (matching cache TTL)
+    const refreshIntervalId = setInterval(() => {
+      void load();
+    }, PRAYER_TIMES_CACHE_TTL_MS);
+
+    return () => clearInterval(refreshIntervalId);
   }, [latitude, longitude]);
 
   return { data, loading };

@@ -1,7 +1,7 @@
 # Noor – The Complete Islamic Platform
 
 Noor is a premium Islamic web experience designed for calm daily worship and reflection.
-It brings prayer times, Quran, Hadith, duas, Tasbih, and Qibla guidance into one modern, responsive platform.
+It brings prayer times, Quran, Hadith, duas, and Tasbih guidance into one modern, responsive platform.
 
 ## Why Noor
 
@@ -18,7 +18,6 @@ It brings prayer times, Quran, Hadith, duas, Tasbih, and Qibla guidance into one
 - Quran browsing with search, translation, and recitation audio
 - Hadith reading with collection filtering and pagination
 - Tasbih counter with persistent local state
-- Qibla compass page with location + orientation support
 - Categorized duas with expandable reading cards
 
 ## UX, Accessibility, and Trust
@@ -85,6 +84,6 @@ Open `http://localhost:3000`.
 
 ## Notes
 
-- Prayer and Qibla pages require browser location permission.
+- Prayer times functionality requires browser location permission.
 - Device orientation features work best on real mobile hardware.
 - If upstream prayer providers are temporarily unavailable, Noor shows graceful fallback timings.

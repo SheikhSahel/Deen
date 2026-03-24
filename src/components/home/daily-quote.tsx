@@ -1,13 +1,36 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { DAILY_QUOTES } from "@/lib/constants";
 import { GlassCard } from "@/components/shared/glass-card";
 
-function getQuoteOfTheDay() {
-  const day = new Date().getDate();
+function getQuoteOfTheDay(date: Date = new Date()) {
+  const day = date.getDate();
   return DAILY_QUOTES[day % DAILY_QUOTES.length];
 }
 
 export function DailyQuote() {
-  const quote = getQuoteOfTheDay();
+  const [quote, setQuote] = useState(() => getQuoteOfTheDay());
+
+  useEffect(() => {
+    setQuote(getQuoteOfTheDay());
+
+    const scheduleMidnightRefresh = () => {
+      const now = new Date();
+      const nextMidnight = new Date(now);
+      nextMidnight.setHours(24, 0, 0, 0);
+
+      const delay = nextMidnight.getTime() - now.getTime();
+      const timeoutId = setTimeout(() => {
+        setQuote(getQuoteOfTheDay());
+        scheduleMidnightRefresh();
+      }, delay);
+
+      return () => clearTimeout(timeoutId);
+    };
+
+    return scheduleMidnightRefresh();
+  }, []);
 
   return (
     <GlassCard>

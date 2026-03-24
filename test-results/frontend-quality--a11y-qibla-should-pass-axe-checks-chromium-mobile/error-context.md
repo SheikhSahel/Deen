@@ -7,36 +7,49 @@
   - generic [ref=e3]:
     - banner [ref=e4]:
       - navigation "Main Navigation" [ref=e5]:
-        - link "نور নূর" [ref=e6] [cursor=pointer]:
+        - link "نورনূর" [ref=e6] [cursor=pointer]:
           - /url: /
-          - generic [ref=e7]: نور
-          - generic [ref=e8]: নূর
-        - generic [ref=e9]:
-          - button "থিম পরিবর্তন করুন" [ref=e11] [cursor=pointer]:
-            - img
-          - button "মেনু খুলুন" [ref=e12] [cursor=pointer]:
-            - img
-    - main [ref=e13]:
-      - region "কিবলা দিকনির্দেশনা" [ref=e15]:
+        - generic [ref=e7]:
+          - link "হোম" [ref=e8] [cursor=pointer]:
+            - /url: /
+          - link "নামাজ" [ref=e9] [cursor=pointer]:
+            - /url: /namaz
+          - link "হজ্ব ও উমরা" [ref=e10] [cursor=pointer]:
+            - /url: /hajj-umrah
+          - link "কুরআন" [ref=e11] [cursor=pointer]:
+            - /url: /quran
+          - link "কিতাব" [ref=e12] [cursor=pointer]:
+            - /url: /kitab
+          - link "হাদিস" [ref=e13] [cursor=pointer]:
+            - /url: /hadith
+          - link "তাসবিহ" [ref=e14] [cursor=pointer]:
+            - /url: /tasbih
+          - link "কিবলা" [ref=e15] [cursor=pointer]:
+            - /url: /qibla
+          - link "দু'আ" [ref=e16] [cursor=pointer]:
+            - /url: /duas
         - generic [ref=e17]:
-          - heading "কিবলা দিকনির্দেশনা" [level=1] [ref=e18]
-          - paragraph [ref=e19]: কম্পাস ও লোকেশন ব্যবহার করে আপনার নামাজের দিক নির্ধারণ করুন।
-        - generic [ref=e21]:
-          - button "কম্পাস চালু করুন (iOS)" [ref=e22] [cursor=pointer]
-          - button "লোকেশন আবার নিন" [ref=e23] [cursor=pointer]
-          - generic [ref=e24]:
-            - generic [ref=e25]:
-              - generic "কিবলা নির্দেশক" [ref=e26]
-              - generic [ref=e27]:
-                - paragraph [ref=e28]: কিবলা কোণ
-                - paragraph [ref=e29]: 243.8°
-            - paragraph [ref=e30]: সোনালি নির্দেশকটি উপরের দিকে আসা পর্যন্ত ডিভাইস ঘুরান।
-    - contentinfo [ref=e31]:
-      - generic [ref=e33]:
-        - heading "নূর" [level=3] [ref=e34]
-        - paragraph [ref=e35]: নামাজ, কুরআন, হাদিস, দু‘আ এবং দৈনন্দিন আধ্যাত্মিক উন্নতির জন্য পূর্ণাঙ্গ ইসলামিক প্ল্যাটফর্ম।
-  - button "AI সাহায্য" [ref=e36] [cursor=pointer]:
-    - img
+          - button "থিম পরিবর্তন করুন" [ref=e19]:
+            - img [ref=e20]
+          - button "মেনু খুলুন" [ref=e22]:
+            - img [ref=e23]
+    - main [ref=e24]:
+      - region "কিবলা দিকনির্দেশনা" [ref=e26]:
+        - generic [ref=e28]:
+          - heading "কিবলা দিকনির্দেশনা" [level=1] [ref=e29]
+          - paragraph [ref=e30]: কম্পাস ও লোকেশন ব্যবহার করে আপনার নামাজের দিক নির্ধারণ করুন।
+        - generic [ref=e32]:
+          - button "কম্পাস চালু করুন (iOS)" [ref=e33]
+          - button "লোকেশন আবার নিন" [ref=e34]
+          - generic [ref=e35]:
+            - img [ref=e37]
+            - heading "কম্পাস প্রস্তুত নয়" [level=3] [ref=e40]
+            - paragraph [ref=e41]: কিবলার দিক নির্ণয় করতে লোকেশন অনুমতি দিন এবং ডিভাইস ধীরে নাড়ান।
+    - contentinfo [ref=e42]:
+      - generic [ref=e44]:
+        - generic [ref=e45]: নূর
+        - paragraph [ref=e46]: নামাজ, কুরআন, হাদিস, দু‘আ এবং দৈনন্দিন আধ্যাত্মিক উন্নতির জন্য পূর্ণাঙ্গ ইসলামিক প্ল্যাটফর্ম।
+  - button "AI সাহায্য" [ref=e47]:
+    - img [ref=e48]
   - region "Notifications alt+T"
-  - alert [ref=e37]
 ```

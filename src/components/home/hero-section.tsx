@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useGeolocation } from "@/hooks/use-geolocation";
+import { useIslamicSettings } from "@/hooks/use-islamic-settings";
 import { Button } from "@/components/ui/button";
 
 const calligraphy = ["نور", "رحمة", "سلام", "إيمان", "بركة", "صلاة"];
@@ -15,7 +16,6 @@ type HomeDates = {
 };
 
 const DHAKA_TIMEZONE = "Asia/Dhaka";
-const DEFAULT_HIJRI_ASIA_ADJUSTMENT_DAYS = -1;
 
 const DEFAULT_COORDS = {
   latitude: 23.8103,
@@ -166,10 +166,10 @@ function getBanglaBongabdoDate(now: Date) {
   }
 }
 
-function getLocalHomeDates(now: Date): HomeDates {
+function getLocalHomeDates(now: Date, moonSightingOffset: number = 0): HomeDates {
   return {
     english: formatDateSafe(now, "en-GB", "en-US"),
-    arabic: getHijriDateBn(now, DHAKA_TIMEZONE, DEFAULT_HIJRI_ASIA_ADJUSTMENT_DAYS),
+    arabic: getHijriDateBn(now, DHAKA_TIMEZONE, moonSightingOffset),
     bengali: getBanglaBongabdoDate(now),
   };
 }
@@ -218,8 +218,9 @@ function getHijriDateFromApi(hijri?: {
 
 export function HeroSection() {
   const { coordinates } = useGeolocation();
+  const { settings } = useIslamicSettings();
   const [clientTimeZone, setClientTimeZone] = useState(DHAKA_TIMEZONE);
-  const [dates, setDates] = useState<HomeDates>(() => getLocalHomeDates(new Date()));
+  const [dates, setDates] = useState<HomeDates>(() => getLocalHomeDates(new Date(), settings.moonSightingOffset));
 
   useEffect(() => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -229,7 +230,7 @@ export function HeroSection() {
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-    setDates(getLocalHomeDates(new Date()));
+    setDates(getLocalHomeDates(new Date(), settings.moonSightingOffset));
 
     const scheduleMidnightRefresh = () => {
       const now = new Date();
@@ -242,6 +243,7 @@ export function HeroSection() {
         setDates((prev) => ({
           ...prev,
           english: formatDateSafe(refreshedNow, "en-GB", "en-US"),
+          arabic: getHijriDateBn(refreshedNow, DHAKA_TIMEZONE, settings.moonSightingOffset),
           bengali: getBanglaBongabdoDate(refreshedNow),
         }));
 
@@ -254,7 +256,7 @@ export function HeroSection() {
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, []);
+  }, [settings.moonSightingOffset]);
 
   useEffect(() => {
     let isMounted = true;
@@ -262,7 +264,7 @@ export function HeroSection() {
     const updateHijriFromLocation = async () => {
       const now = new Date();
       const targetCoordinates = coordinates ?? DEFAULT_COORDS;
-      const adjustmentDays = clientTimeZone.startsWith("Asia/") ? DEFAULT_HIJRI_ASIA_ADJUSTMENT_DAYS : 0;
+      const adjustmentDays = settings.moonSightingOffset;
 
       try {
         const response = await fetch(
@@ -299,7 +301,7 @@ export function HeroSection() {
       isMounted = false;
       if (intervalId) clearInterval(intervalId);
     };
-  }, [coordinates, clientTimeZone]);
+  }, [coordinates, clientTimeZone, settings.moonSightingOffset]);
 
   return (
     <section className="relative overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-emerald-600/15 via-background to-amber-500/10 p-5 sm:p-7 md:p-10 lg:p-12">
