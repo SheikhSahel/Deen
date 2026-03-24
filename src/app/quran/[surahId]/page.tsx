@@ -141,7 +141,7 @@ export default function SurahDetailsPage() {
         <GlassCard>
           <p className="text-sm text-muted-foreground">সূরার অডিও তিলাওয়াত (আলাফাসি)</p>
           <div className="mt-3 flex items-center gap-3">
-            <Button onClick={() => void handleToggleAudio()} className="rounded-full bg-emerald-600 hover:bg-emerald-700">
+            <Button onClick={() => void handleToggleAudio()} className="rounded-full bg-emerald-700 hover:bg-emerald-800">
               {isPlaying ? "সূরা থামান" : "সূরা চালান"}
             </Button>
           </div>

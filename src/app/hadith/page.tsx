@@ -202,7 +202,7 @@ export default function HadithPage() {
             <Button
               key={collection.id}
               variant={selectedCollection === collection.id ? "default" : "outline"}
-              className={selectedCollection === collection.id ? "rounded-full bg-emerald-600 hover:bg-emerald-700" : "rounded-full"}
+              className={selectedCollection === collection.id ? "rounded-full bg-emerald-700 hover:bg-emerald-800" : "rounded-full"}
               onClick={() => {
                 setSelectedCollection(collection.id);
                 setPage(1);
@@ -247,7 +247,7 @@ export default function HadithPage() {
         <Button variant="outline" className="rounded-full" disabled={page === 1} onClick={() => setPage((prev) => prev - 1)}>
           আগের পৃষ্ঠা
         </Button>
-        <Button onClick={() => setPage((prev) => prev + 1)} className="rounded-full bg-emerald-600 hover:bg-emerald-700">
+        <Button onClick={() => setPage((prev) => prev + 1)} className="rounded-full bg-emerald-700 hover:bg-emerald-800">
           পরের পৃষ্ঠা
         </Button>
       </div>
