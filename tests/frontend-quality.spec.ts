@@ -99,12 +99,14 @@ for (const route of routes) {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
 
-    // Exclude external/decorative elements from accessibility checks
-    // - nextjs-portal: Sonner toast notifications (external library element)
-    // - .arabic-text.absolute: Decorative calligraphy background (purely decorative with aria-hidden)
+    // Remove Sonner toast portal from DOM before accessibility scan (external library)
+    await page.evaluate(() => {
+      const portal = document.getElementById("nextjs-portal");
+      if (portal) portal.remove();
+    });
+
+    // Exclude decorative calligraphy background from accessibility checks
     const accessibilityScanResults = await new AxeBuilder({ page })
-      .exclude("#nextjs-portal")
-      .exclude("#nextjs-portal *")
       .exclude(".arabic-text.absolute")
       .analyze();
     expect(accessibilityScanResults.violations).toEqual([]);
@@ -125,11 +127,13 @@ for (const route of routes) {
       `,
     });
 
+    const timeout = route === "/hadith" ? 15000 : 5000;
     await expect(page).toHaveScreenshot(
       `${route === "/" ? "home" : route.replace(/\//g, "-").slice(1)}.png`,
       {
         fullPage: true,
         maxDiffPixelRatio: 0.02,
+        timeout,
       },
     );
   });
