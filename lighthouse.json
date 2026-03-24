@@ -1,0 +1,34 @@
+{
+  "extends": "lighthouse:default",
+  "settings": {
+    "onlyCategories": ["performance", "accessibility", "best-practices", "seo"]
+  },
+  "budgets": [
+    {
+      "type": "bundle",
+      "bundle": [
+        {
+          "name": "js",
+          "budget": 250
+        }
+      ]
+    },
+    {
+      "type": "timings",
+      "timings": [
+        {
+          "metric": "first-contentful-paint",
+          "budget": 2000
+        },
+        {
+          "metric": "largest-contentful-paint",
+          "budget": 2500
+        },
+        {
+          "metric": "cumulative-layout-shift",
+          "budget": 0.1
+        }
+      ]
+    }
+  ]
+}
