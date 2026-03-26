@@ -239,8 +239,8 @@ export function AiQnaWidget() {
                 className={cn(
                   "rounded-xl px-3 py-2 text-sm leading-relaxed",
                   message.role === "user"
-                    ? "ml-8 bg-emerald-600/15 text-foreground"
-                    : "mr-8 border border-emerald-400/20 bg-background",
+                  ? "ml-4 sm:ml-8 bg-emerald-600/15 text-foreground"
+                  : "mr-4 sm:mr-8 border border-emerald-400/20 bg-background",
                 )}
               >
                 <p className="mb-1 text-[11px] uppercase tracking-wide text-emerald-600/80">
@@ -256,7 +256,7 @@ export function AiQnaWidget() {
           )}
 
           {isLoading ? (
-            <div className="mr-8 rounded-xl border border-emerald-400/20 bg-background px-3 py-2 text-sm text-muted-foreground">
+            <div className="mr-4 sm:mr-8 rounded-xl border border-emerald-400/20 bg-background px-3 py-2 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 উত্তর তৈরি করা হচ্ছে...
@@ -265,30 +265,32 @@ export function AiQnaWidget() {
           ) : null}
         </div>
 
-        <div className="border-t border-emerald-400/20 px-4 py-3">
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <p className="w-full text-xs text-muted-foreground">ওয়েবসাইট সম্পূর্ণ বন্ধ করলে এই সেশনের ইতিহাস মুছে যাবে।</p>
-            <Button
-              variant={citationsMode ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCitationsMode((prev) => !prev)}
-              className="h-7 px-2 text-xs"
-            >
-              সূত্র মোড {citationsMode ? "চালু" : "বন্ধ"}
-            </Button>
-            {messages.length > 0 ? (
-              <Button variant="ghost" size="sm" onClick={clearSession} className="h-7 px-2 text-xs">
-                <Trash2 className="h-3.5 w-3.5" /> মুছুন
+        <div className="border-t border-emerald-400/20 px-4 py-3 pb-20 sm:pb-3">
+          <div className="mb-3 space-y-2">
+            <p className="text-xs text-muted-foreground">ওয়েবসাইট সম্পূর্ণ বন্ধ করলে এই সেশনের ইতিহাস মুছে যাবে।</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                variant={citationsMode ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCitationsMode((prev) => !prev)}
+                className="h-7 px-2 text-xs"
+              >
+                সূত্র মোড {citationsMode ? "চালু" : "বন্ধ"}
               </Button>
-            ) : null}
+              {messages.length > 0 ? (
+                <Button variant="ghost" size="sm" onClick={clearSession} className="h-7 px-2 text-xs">
+                  <Trash2 className="h-3.5 w-3.5" /> মুছুন
+                </Button>
+              ) : null}
+            </div>
           </div>
 
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex gap-2">
             <textarea
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
               placeholder="ইসলামিক যেকোনো প্রশ্ন লিখুন..."
-              className="min-h-[46px] flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="flex-1 min-h-[44px] resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               onKeyDown={(event) => {
                 if (event.key === "Enter" && !event.shiftKey) {
                   event.preventDefault();
@@ -299,7 +301,7 @@ export function AiQnaWidget() {
             <Button
               onClick={() => void askQuestion()}
               disabled={!canSend}
-              className="h-[46px] w-full rounded-md bg-emerald-700 px-3 hover:bg-emerald-800 sm:w-auto"
+              className="h-[44px] w-[44px] flex-shrink-0 rounded-md bg-emerald-700 p-0 hover:bg-emerald-800"
               aria-label="প্রশ্ন পাঠান"
             >
               <Send className="h-4 w-4" />
