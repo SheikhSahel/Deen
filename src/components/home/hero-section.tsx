@@ -236,13 +236,26 @@ export function HeroSection() {
     getLocalHomeDates(new Date(2026, 0, 1), 0)
   );
 
-  // Initialize dates on mount
+  // Initialize dates on mount (only once)
   useEffect(() => {
-    setDates(getLocalHomeDates(new Date(), settings.moonSightingOffset));
+    const now = new Date();
+    // Use default moonSightingOffset (0) on mount, will be updated when settings load
+    setDates(getLocalHomeDates(now, 0));
     
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (tz) setClientTimeZone(tz);
-  }, [settings.moonSightingOffset]);
+  }, []);
+
+  // Update dates when moonSightingOffset changes
+  useEffect(() => {
+    const now = new Date();
+    setDates((prev) => ({
+      ...prev,
+      english: formatDateSafe(now, "en-GB", "en-US"),
+      bengali: getBanglaBongabdoDate(now),
+      arabic: getHijriDateBn(now, clientTimeZone, settings.moonSightingOffset),
+    }));
+  }, [settings.moonSightingOffset, clientTimeZone]);
 
   // Schedule English & Bengali date refresh at midnight
   useEffect(() => {
