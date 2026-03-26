@@ -7,9 +7,11 @@ import { GlassCard } from "@/components/shared/glass-card";
 import { Button } from "@/components/ui/button";
 
 export function DailyDua() {
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
+    setNow(new Date());
+
     const timer = window.setInterval(() => {
       setNow(new Date());
     }, 60_000);
@@ -18,7 +20,9 @@ export function DailyDua() {
   }, []);
 
   const selected = useMemo(() => {
-    const dayIndex = now.getDate() % DUA_CATEGORIES.length;
+    // Use a default date for server rendering to avoid hydration mismatch
+    const activeDate = now || new Date(2026, 0, 1); // Default to Jan 1, 2026 if not mounted
+    const dayIndex = activeDate.getDate() % DUA_CATEGORIES.length;
     const category = DUA_CATEGORIES[dayIndex];
     const dua = category.duas[0];
 

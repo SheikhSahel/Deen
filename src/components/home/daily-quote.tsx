@@ -10,7 +10,9 @@ function getQuoteOfTheDay(date: Date = new Date()) {
 }
 
 export function DailyQuote() {
-  const [quote, setQuote] = useState(() => getQuoteOfTheDay());
+  // Use a fixed date for server rendering to avoid hydration mismatch
+  // This will be updated to the actual current date on client
+  const [quote, setQuote] = useState(() => getQuoteOfTheDay(new Date(2026, 0, 1)));
 
   useEffect(() => {
     setQuote(getQuoteOfTheDay());

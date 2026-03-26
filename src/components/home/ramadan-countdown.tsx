@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GlassCard } from "@/components/shared/glass-card";
 import { getRamadanCountdownBySettings } from "@/utils/date";
 import { useIslamicSettings } from "@/hooks/use-islamic-settings";
@@ -54,15 +54,15 @@ export function RamadanCountdown() {
     moonSightingOffset: 0,
   }));
 
-  useLayoutEffect(() => {
-    setSnapshot(buildRamadanSnapshot(settings));
-  }, [settings]);
-
   useEffect(() => {
-    const compute = () => setSnapshot(buildRamadanSnapshot(settings));
+    // Set snapshot whenever settings change (includes initial load)
+    setSnapshot(buildRamadanSnapshot(settings));
 
-    compute();
-    const timer = window.setInterval(compute, 60_000);
+    // Also run every minute to update countdown
+    const timer = window.setInterval(() => {
+      setSnapshot(buildRamadanSnapshot(settings));
+    }, 60_000);
+
     return () => window.clearInterval(timer);
   }, [settings]);
 

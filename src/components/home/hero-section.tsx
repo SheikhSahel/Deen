@@ -220,12 +220,18 @@ export function HeroSection() {
   const { coordinates } = useGeolocation();
   const { settings } = useIslamicSettings();
   const [clientTimeZone, setClientTimeZone] = useState(DHAKA_TIMEZONE);
-  const [dates, setDates] = useState<HomeDates>(() => getLocalHomeDates(new Date(), settings.moonSightingOffset));
+  // Initialize with a safe default for server rendering
+  const [dates, setDates] = useState<HomeDates>(() => 
+    getLocalHomeDates(new Date(2026, 0, 1), 0)
+  );
 
   useEffect(() => {
+    // Update to actual computed values on client
+    setDates(getLocalHomeDates(new Date(), settings.moonSightingOffset));
+    
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (tz) setClientTimeZone(tz);
-  }, []);
+  }, [settings.moonSightingOffset]);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
