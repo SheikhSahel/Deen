@@ -81,9 +81,11 @@ async function requestAnswer(question: string, history: Array<{ role: ChatRole; 
   return "";
 }
 
-function makeId() {
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+function makeId(counterRef: React.MutableRefObject<number>) {
+  counterRef.current += 1;
+  return `msg-${counterRef.current}`;
 }
+
 
 export function AiQnaWidget() {
   const [open, setOpen] = useState(false);
@@ -91,16 +93,21 @@ export function AiQnaWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [citationsMode, setCitationsMode] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const isMountedRef = useRef(true);
+  const idCounterRef = useRef(0);
 
   useEffect(() => {
+    setMounted(true);
     return () => {
       isMountedRef.current = false;
     };
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    
     try {
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (!raw) return;
@@ -109,7 +116,7 @@ export function AiQnaWidget() {
     } catch {
       sessionStorage.removeItem(STORAGE_KEY);
     }
-  }, []);
+  }, [mounted]);
 
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
@@ -144,7 +151,7 @@ export function AiQnaWidget() {
     if (!text || isLoading) return;
 
     const userMessage: ChatMessage = {
-      id: makeId(),
+      id: makeId(idCounterRef),
       role: "user",
       content: text,
     };
@@ -166,7 +173,7 @@ export function AiQnaWidget() {
 
       const safeAnswer = answer || "দুঃখিত, এই মুহূর্তে নির্ভরযোগ্য উত্তর তৈরি করা যাচ্ছে না। অনুগ্রহ করে আবার চেষ্টা করুন।";
 
-      const assistantId = makeId();
+      const assistantId = makeId(idCounterRef);
       setMessages((prev) => [
         ...prev,
         {
@@ -186,7 +193,7 @@ export function AiQnaWidget() {
       setMessages((prev) => [
         ...prev,
         {
-          id: makeId(),
+          id: makeId(idCounterRef),
           role: "assistant",
           content: "AI সেবার সাথে সংযোগ করা যাচ্ছে না। কিছুক্ষণ পর আবার চেষ্টা করুন।",
         },

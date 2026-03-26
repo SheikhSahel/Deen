@@ -13,6 +13,24 @@ export function ThemeToggle() {
     setMounted(true);
   }, []);
 
+  // Render placeholder on server and during initial hydration to avoid mismatch
+  // Use system theme preference as fallback (preferred-color-scheme)
+  if (!mounted) {
+    return (
+      <div className="flex items-center gap-1.5">
+        <Button
+          variant="outline"
+          size="icon"
+          disabled
+          aria-label="থিম পরিবর্তন করুন"
+          className="border-emerald-300/40 bg-white/10 backdrop-blur-xl"
+        >
+          <Moon className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  }
+
   const isDark = resolvedTheme === "dark";
 
   return (
@@ -24,7 +42,7 @@ export function ThemeToggle() {
         aria-label="থিম পরিবর্তন করুন"
         className="border-emerald-300/40 bg-white/10 backdrop-blur-xl"
       >
-        {mounted ? (isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />) : <Moon className="h-4 w-4" aria-hidden="true" />}
+        {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       </Button>
     </div>
   );
