@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { useIslamicSettings } from "@/hooks/use-islamic-settings";
+import { usePrayerTimes } from "@/hooks/use-prayer-times";
+import { sanitizePrayerTime } from "@/utils/prayer";
 import { Button } from "@/components/ui/button";
 
 const calligraphy = ["نور", "رحمة", "سلام", "إيمان", "بركة", "صلاة"];
@@ -219,26 +221,34 @@ function getHijriDateFromApi(hijri?: {
 export function HeroSection() {
   const { coordinates } = useGeolocation();
   const { settings } = useIslamicSettings();
+  
+  // Memoize targetCoordinates to prevent unnecessary re-renders
+  const targetCoordinates = useMemo(
+    () => coordinates ?? DEFAULT_COORDS,
+    [coordinates]
+  );
+  
+  const { data: prayerData } = usePrayerTimes(targetCoordinates.latitude, targetCoordinates.longitude);
+  
   const [clientTimeZone, setClientTimeZone] = useState(DHAKA_TIMEZONE);
   // Initialize with a safe default for server rendering
   const [dates, setDates] = useState<HomeDates>(() => 
     getLocalHomeDates(new Date(2026, 0, 1), 0)
   );
 
+  // Initialize dates on mount
   useEffect(() => {
-    // Update to actual computed values on client
     setDates(getLocalHomeDates(new Date(), settings.moonSightingOffset));
     
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (tz) setClientTimeZone(tz);
   }, [settings.moonSightingOffset]);
 
+  // Schedule English & Bengali date refresh at midnight
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-    setDates(getLocalHomeDates(new Date(), settings.moonSightingOffset));
-
-    const scheduleMidnightRefresh = () => {
+    const scheduleGregorianRefresh = () => {
       const now = new Date();
       const nextMidnight = new Date(now);
       nextMidnight.setHours(24, 0, 0, 0);
@@ -249,27 +259,72 @@ export function HeroSection() {
         setDates((prev) => ({
           ...prev,
           english: formatDateSafe(refreshedNow, "en-GB", "en-US"),
-          arabic: getHijriDateBn(refreshedNow, DHAKA_TIMEZONE, settings.moonSightingOffset),
           bengali: getBanglaBongabdoDate(refreshedNow),
         }));
 
-        scheduleMidnightRefresh();
+        scheduleGregorianRefresh();
       }, delay);
     };
 
-    scheduleMidnightRefresh();
+    scheduleGregorianRefresh();
 
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [settings.moonSightingOffset]);
+  }, []);
 
+  // Schedule Arabic (Hijri) date refresh at sunset
+  useEffect(() => {
+    if (!prayerData?.data?.timings?.Maghrib) return;
+
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    const scheduleHijriRefresh = () => {
+      const now = new Date();
+      
+      // Parse Maghrib time from prayer data
+      const maghribStr = sanitizePrayerTime(prayerData.data.timings.Maghrib);
+      const [maghribHours, maghribMinutes] = maghribStr.split(":").map(Number);
+      
+      // Create a Date object for today's sunset
+      const today = new Date();
+      today.setHours(maghribHours, maghribMinutes, 0, 0);
+
+      let nextSunset = today;
+      
+      // If sunset has already passed today, schedule for tomorrow's sunset
+      if (now > today) {
+        nextSunset = new Date(today);
+        nextSunset.setDate(nextSunset.getDate() + 1);
+      }
+
+      const delay = nextSunset.getTime() - now.getTime();
+      
+      timeoutId = setTimeout(() => {
+        const refreshedNow = new Date();
+        setDates((prev) => ({
+          ...prev,
+          arabic: getHijriDateBn(refreshedNow, clientTimeZone, settings.moonSightingOffset),
+        }));
+
+        // Reschedule for next sunset
+        scheduleHijriRefresh();
+      }, delay);
+    };
+
+    scheduleHijriRefresh();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [prayerData, clientTimeZone, settings.moonSightingOffset]);
+
+  // Update Hijri date from API when coordinates change
   useEffect(() => {
     let isMounted = true;
 
     const updateHijriFromLocation = async () => {
       const now = new Date();
-      const targetCoordinates = coordinates ?? DEFAULT_COORDS;
       const adjustmentDays = settings.moonSightingOffset;
 
       try {
@@ -293,7 +348,7 @@ export function HeroSection() {
         if (!isMounted) return;
         setDates((prev) => ({
           ...prev,
-          arabic: getHijriDateBn(now, clientTimeZone, adjustmentDays),
+          arabic: getHijriDateBn(now, clientTimeZone, settings.moonSightingOffset),
         }));
       }
     };
@@ -307,7 +362,7 @@ export function HeroSection() {
       isMounted = false;
       if (intervalId) clearInterval(intervalId);
     };
-  }, [coordinates, clientTimeZone, settings.moonSightingOffset]);
+  }, [targetCoordinates, clientTimeZone, settings.moonSightingOffset]);
 
   return (
     <section className="relative overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-emerald-600/15 via-background to-amber-500/10 p-5 sm:p-7 md:p-10 lg:p-12">
