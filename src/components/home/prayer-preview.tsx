@@ -3,16 +3,8 @@
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { usePrayerTimes } from "@/hooks/use-prayer-times";
 import { GlassCard } from "@/components/shared/glass-card";
-import { PRAYER_ORDER, getNextPrayer, sanitizePrayerTime } from "@/utils/prayer";
+import { PRAYER_ORDER, formatPrayerTime12Hour, getNextPrayer, getPrayerLabel, isFridayPrayerDay } from "@/utils/prayer";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const PRAYER_LABELS: Record<string, string> = {
-  Fajr: "ফজর",
-  Dhuhr: "যোহর",
-  Asr: "আসর",
-  Maghrib: "মাগরিব",
-  Isha: "এশা",
-};
 
 export function PrayerPreview() {
   const { coordinates, loading: locationLoading, error } = useGeolocation();
@@ -41,7 +33,8 @@ export function PrayerPreview() {
     );
   }
 
-  const nextPrayer = getNextPrayer(data.data.timings);
+  const isFriday = isFridayPrayerDay(data.data.date.gregorian?.weekday?.en);
+  const nextPrayer = getNextPrayer(data.data.timings, isFriday);
 
   return (
     <GlassCard>
@@ -58,9 +51,9 @@ export function PrayerPreview() {
                   : "border-emerald-300/20 bg-black/10"
               }`}
             >
-              <p className="text-xs font-medium sm:text-sm">{PRAYER_LABELS[prayer] ?? prayer}</p>
+              <p className="text-xs font-medium sm:text-sm">{getPrayerLabel(prayer, isFriday)}</p>
               <p className="mt-1 text-base font-semibold text-amber-500 sm:text-lg">
-                {sanitizePrayerTime(data.data.timings[prayer])}
+                {formatPrayerTime12Hour(data.data.timings[prayer])}
               </p>
             </div>
           );

@@ -7,11 +7,13 @@ import { usePrayerTimes } from "@/hooks/use-prayer-times";
 import { LoadingGrid } from "@/components/shared/loading-grid";
 import { Button } from "@/components/ui/button";
 import {
+  formatPrayerTime12Hour,
   getForbiddenPrayerWindows,
   getNaflPrayerWindows,
+  getPrayerLabel,
   getNextPrayer,
   getPrayerWindows,
-  sanitizePrayerTime,
+  isFridayPrayerDay,
 } from "@/utils/prayer";
 import { PageShell } from "@/components/shared/page-shell";
 import { MotionReveal, MotionStagger } from "@/components/motion/motion-section";
@@ -22,13 +24,7 @@ const DEFAULT_COORDS = {
   longitude: 90.4125,
 };
 
-const PRAYER_LABELS: Record<string, string> = {
-  Fajr: "ফজর",
-  Dhuhr: "যোহর",
-  Asr: "আসর",
-  Maghrib: "মাগরিব",
-  Isha: "এশা",
-};
+const PRAYER_ORDER: PrayerKey[] = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
 export default function PrayerTimesPage() {
   const planner = usePrayerPlanner();
@@ -65,8 +61,9 @@ export default function PrayerTimesPage() {
     );
   }
 
-  const nextPrayer = getNextPrayer(data.data.timings);
-  const prayerWindows = getPrayerWindows(data.data.timings);
+  const isFriday = isFridayPrayerDay(data.data.date.gregorian?.weekday?.en);
+  const nextPrayer = getNextPrayer(data.data.timings, isFriday);
+  const prayerWindows = getPrayerWindows(data.data.timings, isFriday);
   const naflWindows = getNaflPrayerWindows(data.data.timings);
   const forbiddenWindows = getForbiddenPrayerWindows(data.data.timings);
 
@@ -86,19 +83,19 @@ export default function PrayerTimesPage() {
       ) : null}
 
       <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-200">
-        এখনকার নামাজ: <span className="font-semibold text-emerald-100">{PRAYER_LABELS[nextPrayer] ?? nextPrayer}</span>
+        এখনকার নামাজ: <span className="font-semibold text-emerald-100">{getPrayerLabel(nextPrayer, isFriday)}</span>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
         <GlassCard className="border-amber-500/30 bg-amber-500/10 p-4 sm:p-5">
           <p className="text-xs uppercase tracking-wide text-amber-300/90">সাহরির শেষ সময়</p>
-          <p className="mt-2 text-2xl font-semibold text-amber-200 sm:text-3xl">{sanitizePrayerTime(data.data.timings.Fajr)}</p>
+          <p className="mt-2 text-2xl font-semibold text-amber-200 sm:text-3xl">{formatPrayerTime12Hour(data.data.timings.Fajr)}</p>
           <p className="mt-1 text-xs text-muted-foreground">ফজরের সময় শুরু হওয়ার সাথে সাথে সাহরি শেষ।</p>
         </GlassCard>
 
         <GlassCard className="border-emerald-500/30 bg-emerald-500/10 p-4 sm:p-5">
           <p className="text-xs uppercase tracking-wide text-emerald-300/90">ইফতারের শুরুর সময়</p>
-          <p className="mt-2 text-2xl font-semibold text-emerald-200 sm:text-3xl">{sanitizePrayerTime(data.data.timings.Maghrib)}</p>
+          <p className="mt-2 text-2xl font-semibold text-emerald-200 sm:text-3xl">{formatPrayerTime12Hour(data.data.timings.Maghrib)}</p>
           <p className="mt-1 text-xs text-muted-foreground">মাগরিব শুরু হওয়ার সাথে সাথে ইফতার করা যায়।</p>
         </GlassCard>
       </div>
@@ -111,10 +108,10 @@ export default function PrayerTimesPage() {
               <GlassCard className={isNext ? "border-emerald-500 bg-emerald-500/10" : "border-emerald-400/20"}>
                 <p className="text-xs text-muted-foreground sm:text-sm">{prayer.label}</p>
                 <p className="mt-2 text-2xl font-semibold text-amber-500 sm:text-3xl">
-                  {sanitizePrayerTime(prayer.start)}
+                  {formatPrayerTime12Hour(prayer.start)}
                 </p>
-                <p className="mt-2 text-xs text-muted-foreground">শুরু: {prayer.start}</p>
-                <p className="text-xs text-muted-foreground">শেষ: {prayer.end}</p>
+                <p className="mt-2 text-xs text-muted-foreground">শুরু: {formatPrayerTime12Hour(prayer.start)}</p>
+                <p className="text-xs text-muted-foreground">শেষ: {formatPrayerTime12Hour(prayer.end)}</p>
               </GlassCard>
             </MotionReveal>
           );
@@ -128,7 +125,7 @@ export default function PrayerTimesPage() {
             {naflWindows.map((window) => (
               <div key={window.key} className="rounded-lg border border-emerald-400/20 px-3 py-2">
                 <p className="font-medium text-emerald-500">{window.label}</p>
-                <p className="text-muted-foreground">শুরু: {window.start} • শেষ: {window.end}</p>
+                <p className="text-muted-foreground">শুরু: {formatPrayerTime12Hour(window.start)} • শেষ: {formatPrayerTime12Hour(window.end)}</p>
               </div>
             ))}
           </div>
@@ -140,7 +137,7 @@ export default function PrayerTimesPage() {
             {forbiddenWindows.map((window) => (
               <div key={window.key} className="rounded-lg border border-red-400/20 px-3 py-2">
                 <p className="font-medium text-red-300">{window.label}</p>
-                <p className="text-muted-foreground">শুরু: {window.start} • শেষ: {window.end}</p>
+                <p className="text-muted-foreground">শুরু: {formatPrayerTime12Hour(window.start)} • শেষ: {formatPrayerTime12Hour(window.end)}</p>
               </div>
             ))}
           </div>
@@ -151,7 +148,7 @@ export default function PrayerTimesPage() {
         <h3 className="text-xl font-semibold">মিসড সালাত ট্র্যাকার</h3>
         <p className="text-sm text-muted-foreground">আজ কোন কোন ফরজ কাজা হয়েছে তা টিক দিন, নিচে ধীরে কাযা পরিকল্পনা দেখাবে।</p>
         <div className="flex flex-wrap gap-2">
-          {(Object.keys(PRAYER_LABELS) as PrayerKey[]).map((prayer) => {
+          {PRAYER_ORDER.map((prayer) => {
             const active = planner.missedToday.includes(prayer);
             return (
               <Button
@@ -160,7 +157,7 @@ export default function PrayerTimesPage() {
                 className="rounded-full"
                 onClick={() => planner.toggleMissed(prayer)}
               >
-                {PRAYER_LABELS[prayer]}
+                {getPrayerLabel(prayer, isFriday)}
               </Button>
             );
           })}

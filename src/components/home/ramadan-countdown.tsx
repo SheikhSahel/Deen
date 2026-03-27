@@ -12,6 +12,12 @@ type RamadanSnapshot = {
   nextStartDate: string;
 };
 
+const SSR_SAFE_SNAPSHOT: RamadanSnapshot = {
+  statusText: "আগামী রমজানের জন্য প্রস্তুতি নিন।",
+  daysLeft: 0,
+  nextStartDate: "--",
+};
+
 function formatBnDate(date: Date, country: "BD" | "SA") {
   return new Intl.DateTimeFormat("bn-BD", {
     day: "2-digit",
@@ -49,10 +55,8 @@ function buildRamadanSnapshot(settings: { country: "BD" | "SA"; moonSightingOffs
 
 export function RamadanCountdown() {
   const { settings } = useIslamicSettings();
-  const [snapshot, setSnapshot] = useState<RamadanSnapshot>(() => buildRamadanSnapshot({
-    country: "BD",
-    moonSightingOffset: 0,
-  }));
+  // Keep the initial HTML identical on server and client, then hydrate live values.
+  const [snapshot, setSnapshot] = useState<RamadanSnapshot>(SSR_SAFE_SNAPSHOT);
 
   useEffect(() => {
     // Set snapshot whenever settings change (includes initial load)

@@ -37,7 +37,38 @@ export interface PrayerWindow {
   end: string;
 }
 
-export function getPrayerWindows(timings: PrayerTimings): PrayerWindow[] {
+export function formatPrayerTime12Hour(time: string) {
+  const [hours, minutes] = sanitizePrayerTime(time).split(":").map(Number);
+  const date = new Date(2026, 0, 1, hours, minutes, 0, 0);
+
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+}
+
+export function getPrayerLabel(prayer: DailyPrayerKey, isFriday = false) {
+  if (prayer === "Dhuhr" && isFriday) {
+    return "জুম'আ";
+  }
+
+  const labels: Record<DailyPrayerKey, string> = {
+    Fajr: "ফজর",
+    Dhuhr: "যোহর",
+    Asr: "আসর",
+    Maghrib: "মাগরিব",
+    Isha: "এশা",
+  };
+
+  return labels[prayer];
+}
+
+export function isFridayPrayerDay(weekdayEnglish?: string) {
+  return weekdayEnglish?.toLowerCase() === "friday";
+}
+
+export function getPrayerWindows(timings: PrayerTimings, isFriday = false): PrayerWindow[] {
   const fajr = sanitizePrayerTime(timings.Fajr);
   const dhuhr = sanitizePrayerTime(timings.Dhuhr);
   const asr = sanitizePrayerTime(timings.Asr);
@@ -45,11 +76,11 @@ export function getPrayerWindows(timings: PrayerTimings): PrayerWindow[] {
   const isha = sanitizePrayerTime(timings.Isha);
 
   return [
-    { key: "Fajr", label: "ফজর", start: fajr, end: addMinutes(dhuhr, -1) },
-    { key: "Dhuhr", label: "যোহর", start: dhuhr, end: addMinutes(asr, -1) },
-    { key: "Asr", label: "আসর", start: asr, end: addMinutes(maghrib, -1) },
-    { key: "Maghrib", label: "মাগরিব", start: maghrib, end: addMinutes(isha, -1) },
-    { key: "Isha", label: "এশা", start: isha, end: addMinutes(fajr, -1) },
+    { key: "Fajr", label: getPrayerLabel("Fajr"), start: fajr, end: addMinutes(dhuhr, -1) },
+    { key: "Dhuhr", label: getPrayerLabel("Dhuhr", isFriday), start: dhuhr, end: addMinutes(asr, -1) },
+    { key: "Asr", label: getPrayerLabel("Asr"), start: asr, end: addMinutes(maghrib, -1) },
+    { key: "Maghrib", label: getPrayerLabel("Maghrib"), start: maghrib, end: addMinutes(isha, -1) },
+    { key: "Isha", label: getPrayerLabel("Isha"), start: isha, end: addMinutes(fajr, -1) },
   ];
 }
 
@@ -109,10 +140,10 @@ export function getForbiddenPrayerWindows(timings: PrayerTimings): PrayerWindow[
   ];
 }
 
-export function getNextPrayer(timings: PrayerTimings): DailyPrayerKey {
+export function getNextPrayer(timings: PrayerTimings, isFriday = false): DailyPrayerKey {
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
-  const prayerWindows = getPrayerWindows(timings);
+  const prayerWindows = getPrayerWindows(timings, isFriday);
 
   // Keep showing the active prayer until the end of its window.
   for (const window of prayerWindows) {

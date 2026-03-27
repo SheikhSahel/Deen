@@ -86,6 +86,7 @@
     @apply scroll-smooth;
     scrollbar-gutter: stable;
     overflow-y: scroll;
+    overflow-x: clip;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -104,6 +105,7 @@
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: clip;
     background-image: radial-gradient(circle at 15% 0%, hsl(158 64% 32% / 0.08), transparent 35%),
       radial-gradient(circle at 85% 6%, hsl(43 84% 55% / 0.1), transparent 30%),
       radial-gradient(circle at 50% 100%, hsl(158 46% 26% / 0.08), transparent 40%);

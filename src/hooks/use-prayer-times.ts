@@ -16,8 +16,7 @@ interface CachedPrayerTimes {
 function getCacheKey(latitude: number, longitude: number) {
   const lat = latitude.toFixed(3);
   const lng = longitude.toFixed(3);
-  const date = new Date().toISOString().slice(0, 10);
-  return `${PRAYER_TIMES_CACHE_KEY_PREFIX}:${date}:${lat}:${lng}`;
+  return `${PRAYER_TIMES_CACHE_KEY_PREFIX}:${lat}:${lng}`;
 }
 
 function readPrayerTimesCache(cacheKey: string): PrayerTimesResponse | null {

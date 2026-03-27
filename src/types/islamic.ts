@@ -17,6 +17,11 @@ export interface PrayerTimesResponse {
     timings: PrayerTimings;
     date: {
       readable: string;
+      gregorian?: {
+        weekday?: {
+          en?: string;
+        };
+      };
       hijri: {
         date: string;
         month: { en: string; number: number };

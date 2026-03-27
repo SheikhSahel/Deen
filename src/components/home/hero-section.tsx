@@ -75,10 +75,11 @@ function getDhakaDateParts(now: Date) {
 
 function getBanglaDateFallback(now: Date) {
   const { year, month, day } = getDhakaDateParts(now);
-  const banglaYearStartGregorian = month > 4 || (month === 4 && day >= 15) ? year : year - 1;
+  // In the Bangladesh revised Bangla calendar, Pohela Boishakh starts on April 14.
+  const banglaYearStartGregorian = month > 4 || (month === 4 && day >= 14) ? year : year - 1;
   const banglaYear = banglaYearStartGregorian - 593;
 
-  const startUtc = Date.UTC(banglaYearStartGregorian, 3, 15);
+  const startUtc = Date.UTC(banglaYearStartGregorian, 3, 14);
   const targetUtc = Date.UTC(year, month - 1, day);
   let dayOfBanglaYear = Math.floor((targetUtc - startUtc) / (1000 * 60 * 60 * 24)) + 1;
 
@@ -176,9 +177,28 @@ function getLocalHomeDates(now: Date, moonSightingOffset: number = 0): HomeDates
   };
 }
 
-function getHijriDateBn(now: Date, timeZone = DHAKA_TIMEZONE, adjustmentDays = 0) {
+function getHijriReferenceDate(now: Date, maghribTime?: string) {
+  if (!maghribTime) return now;
+
+  const [hours, minutes] = maghribTime.split(":").map(Number);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return now;
+
+  const maghrib = new Date(now);
+  maghrib.setHours(hours, minutes, 0, 0);
+
+  // Hijri day starts after Maghrib; before Maghrib we still show previous Hijri date.
+  if (now < maghrib) {
+    const previous = new Date(now);
+    previous.setDate(previous.getDate() - 1);
+    return previous;
+  }
+
+  return now;
+}
+
+function getHijriDateBn(now: Date, timeZone = DHAKA_TIMEZONE, adjustmentDays = 0, maghribTime?: string) {
   try {
-    const adjusted = new Date(now);
+    const adjusted = new Date(getHijriReferenceDate(now, maghribTime));
     if (adjustmentDays !== 0) {
       adjusted.setDate(adjusted.getDate() + adjustmentDays);
     }
@@ -229,8 +249,13 @@ export function HeroSection() {
   );
   
   const { data: prayerData } = usePrayerTimes(targetCoordinates.latitude, targetCoordinates.longitude);
+  const maghribTime = useMemo(() => {
+    const raw = prayerData?.data?.timings?.Maghrib;
+    return raw ? sanitizePrayerTime(raw) : undefined;
+  }, [prayerData?.data?.timings?.Maghrib]);
   
   const [clientTimeZone, setClientTimeZone] = useState(DHAKA_TIMEZONE);
+  const [mounted, setMounted] = useState(false);
   // Initialize with a safe default for server rendering
   const [dates, setDates] = useState<HomeDates>(() => 
     getLocalHomeDates(new Date(2026, 0, 1), 0)
@@ -238,6 +263,7 @@ export function HeroSection() {
 
   // Initialize dates on mount (only once)
   useEffect(() => {
+    setMounted(true);
     const now = new Date();
     // Use default moonSightingOffset (0) on mount, will be updated when settings load
     setDates(getLocalHomeDates(now, 0));
@@ -253,9 +279,9 @@ export function HeroSection() {
       ...prev,
       english: formatDateSafe(now, "en-GB", "en-US"),
       bengali: getBanglaBongabdoDate(now),
-      arabic: getHijriDateBn(now, clientTimeZone, settings.moonSightingOffset),
+      arabic: getHijriDateBn(now, clientTimeZone, settings.moonSightingOffset, maghribTime),
     }));
-  }, [settings.moonSightingOffset, clientTimeZone]);
+  }, [settings.moonSightingOffset, clientTimeZone, maghribTime]);
 
   // Schedule English & Bengali date refresh at midnight
   useEffect(() => {
@@ -288,7 +314,7 @@ export function HeroSection() {
 
   // Schedule Arabic (Hijri) date refresh at sunset
   useEffect(() => {
-    if (!prayerData?.data?.timings?.Maghrib) return;
+    if (!maghribTime) return;
 
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
@@ -296,8 +322,7 @@ export function HeroSection() {
       const now = new Date();
       
       // Parse Maghrib time from prayer data
-      const maghribStr = sanitizePrayerTime(prayerData.data.timings.Maghrib);
-      const [maghribHours, maghribMinutes] = maghribStr.split(":").map(Number);
+      const [maghribHours, maghribMinutes] = maghribTime.split(":").map(Number);
       
       // Create a Date object for today's sunset
       const today = new Date();
@@ -317,7 +342,7 @@ export function HeroSection() {
         const refreshedNow = new Date();
         setDates((prev) => ({
           ...prev,
-          arabic: getHijriDateBn(refreshedNow, clientTimeZone, settings.moonSightingOffset),
+          arabic: getHijriDateBn(refreshedNow, clientTimeZone, settings.moonSightingOffset, maghribTime),
         }));
 
         // Reschedule for next sunset
@@ -330,7 +355,7 @@ export function HeroSection() {
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [prayerData, clientTimeZone, settings.moonSightingOffset]);
+  }, [maghribTime, clientTimeZone, settings.moonSightingOffset]);
 
   // Update Hijri date from API when coordinates change
   useEffect(() => {
@@ -354,14 +379,14 @@ export function HeroSection() {
           ...prev,
           arabic:
             clientTimeZone.startsWith("Asia/")
-              ? getHijriDateBn(now, clientTimeZone, adjustmentDays)
-              : hijriFromApi ?? getHijriDateBn(now, clientTimeZone, 0),
+              ? getHijriDateBn(now, clientTimeZone, adjustmentDays, maghribTime)
+              : hijriFromApi ?? getHijriDateBn(now, clientTimeZone, 0, maghribTime),
         }));
       } catch {
         if (!isMounted) return;
         setDates((prev) => ({
           ...prev,
-          arabic: getHijriDateBn(now, clientTimeZone, settings.moonSightingOffset),
+          arabic: getHijriDateBn(now, clientTimeZone, settings.moonSightingOffset, maghribTime),
         }));
       }
     };
@@ -375,7 +400,7 @@ export function HeroSection() {
       isMounted = false;
       if (intervalId) clearInterval(intervalId);
     };
-  }, [targetCoordinates, clientTimeZone, settings.moonSightingOffset]);
+  }, [targetCoordinates, clientTimeZone, settings.moonSightingOffset, maghribTime]);
 
   return (
     <section className="relative overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-emerald-600/15 via-background to-amber-500/10 p-5 sm:p-7 md:p-10 lg:p-12">
@@ -404,26 +429,29 @@ export function HeroSection() {
         </p>
 
         <div className="grid gap-2 sm:grid-cols-3">
-          <div className="order-1 rounded-xl border border-emerald-400/20 bg-white/10 px-3 py-2 backdrop-blur-xl">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-emerald-600/80">English</p>
-            <p suppressHydrationWarning className="mt-1 text-xs text-foreground/90 sm:text-sm">{dates.english}</p>
-          </div>
-          <div className="order-3 rounded-xl border border-emerald-400/20 bg-white/10 px-3 py-2 backdrop-blur-xl sm:order-2">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-emerald-600/80">বাংলা</p>
-            <p suppressHydrationWarning className="arabic-text mt-1 text-xs leading-relaxed text-foreground/90 sm:text-sm">
-              {dates.bengali}
-            </p>
-          </div>
-          <div className="order-2 rounded-xl border border-emerald-400/20 bg-white/10 px-3 py-2 backdrop-blur-xl sm:order-3">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-emerald-600/80">Arabic (Hijri)</p>
-            <p
-              suppressHydrationWarning
-              lang="ar-SA"
-              className="arabic-text mt-1 w-full text-left text-sm leading-relaxed text-amber-500 sm:text-base"
-            >
-              {dates.arabic}
-            </p>
-          </div>
+          {mounted && (
+            <>
+              <div className="order-1 rounded-xl border border-emerald-400/20 bg-white/10 px-3 py-2 backdrop-blur-xl">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-emerald-600/80">English</p>
+                <p className="mt-1 text-xs text-foreground/90 sm:text-sm">{dates.english}</p>
+              </div>
+              <div className="order-3 rounded-xl border border-emerald-400/20 bg-white/10 px-3 py-2 backdrop-blur-xl sm:order-2">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-emerald-600/80">বাংলা</p>
+                <p className="arabic-text mt-1 text-xs leading-relaxed text-foreground/90 sm:text-sm">
+                  {dates.bengali}
+                </p>
+              </div>
+              <div className="order-2 rounded-xl border border-emerald-400/20 bg-white/10 px-3 py-2 backdrop-blur-xl sm:order-3">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-emerald-600/80">Arabic (Hijri)</p>
+                <p
+                  lang="ar-SA"
+                  className="arabic-text mt-1 w-full text-left text-sm leading-relaxed text-amber-500 sm:text-base"
+                >
+                  {dates.arabic}
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-2.5 sm:gap-3">
